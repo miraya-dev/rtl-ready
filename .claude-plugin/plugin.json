@@ -1,0 +1,13 @@
+{
+  "name": "rtl-ready",
+  "version": "0.1.0",
+  "description": "Make any web app ready for right-to-left languages (Arabic, Hebrew, Persian, Urdu): a zero-dependency scanner for physical CSS and Tailwind with safe auto-fixes, plus guidance for icons, bidi text, typography and Intl.",
+  "author": {
+    "name": "Miraya",
+    "url": "https://miraya-web-el-mo-dev1.vercel.app"
+  },
+  "homepage": "https://github.com/miraya-dev/rtl-ready",
+  "repository": "https://github.com/miraya-dev/rtl-ready",
+  "license": "MIT",
+  "keywords": ["rtl", "arabic", "hebrew", "persian", "urdu", "i18n", "tailwindcss", "css", "bidi", "skill"]
+}

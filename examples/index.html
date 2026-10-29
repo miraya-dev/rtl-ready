@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>rtl-ready demo</title>
+    <meta name="description" content="The same checkout page before and after the rtl-ready Claude Code skill, in English and Arabic." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f6f3ee;
+        --card: #ffffff;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --bad: #b91c1c;
+        --good: #047857;
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font: 16px/1.6 Inter, system-ui, sans-serif;
+      }
+      header,
+      main,
+      footer {
+        max-width: 1440px;
+        margin-inline: auto;
+        padding-inline: 16px;
+      }
+      header {
+        padding-block: 40px 24px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+      h1 span {
+        font-family: "IBM Plex Sans Arabic", Inter, sans-serif;
+        letter-spacing: 0;
+      }
+      header p {
+        margin: 12px 0 0;
+        max-width: 720px;
+        color: var(--muted);
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 20px;
+      }
+      .controls button,
+      .controls a {
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--ink);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font: 500 14px Inter, sans-serif;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .controls button[aria-pressed="true"] {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: #fff;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 1100px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      figure {
+        margin: 0;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      figcaption {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-block-end: 1px solid var(--line);
+        font-weight: 600;
+      }
+      figcaption .tag {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        color: #fff;
+      }
+      .before .tag {
+        background: var(--bad);
+      }
+      .after .tag {
+        background: var(--good);
+      }
+      figcaption a {
+        margin-inline-start: auto;
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      iframe {
+        display: block;
+        width: 100%;
+        height: 900px;
+        border: 0;
+      }
+      footer {
+        padding-block: 32px 48px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer a {
+        color: var(--ink);
+      }
+      code {
+        font: 13px ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: #ece8e1;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>rtl-ready · <span>جاهز للعربية</span></h1>
+      <p>
+        The same checkout page twice. <strong>Before</strong> is written LTR-first and only flips <code>dir</code>.
+        <strong>After</strong> is what the <a href="https://github.com/miraya-dev/rtl-ready">rtl-ready</a> Claude Code skill
+        produced: <code>scan.mjs --fix</code> for 57 mechanical fixes, then the 19 checks by hand.
+      </p>
+      <div class="controls" role="group" aria-label="Language">
+        <button type="button" data-lang="ar" aria-pressed="true">العربية (RTL)</button>
+        <button type="button" data-lang="en" aria-pressed="false">English (LTR)</button>
+        <a href="https://github.com/miraya-dev/rtl-ready">Get the skill on GitHub</a>
+      </div>
+    </header>
+    <main class="grid">
+      <figure class="before">
+        <figcaption><span class="tag">Before</span> Only <code>dir="rtl"</code> <a id="open-before" href="before/?lang=ar">Open</a></figcaption>
+        <iframe id="before" src="before/?lang=ar" title="Before rtl-ready" loading="lazy"></iframe>
+      </figure>
+      <figure class="after">
+        <figcaption><span class="tag">After</span> rtl-ready <a id="open-after" href="after/?lang=ar">Open</a></figcaption>
+        <iframe id="after" src="after/?lang=ar" title="After rtl-ready" loading="lazy"></iframe>
+      </figure>
+    </main>
+    <footer>
+      Built by <a href="https://miraya-web-el-mo-dev1.vercel.app">Miraya</a>. MIT licensed. The shop, its products and people are fictional.
+    </footer>
+    <script>
+      for (const button of document.querySelectorAll("[data-lang]")) {
+        button.addEventListener("click", () => {
+          const lang = button.dataset.lang
+          for (const b of document.querySelectorAll("[data-lang]")) b.setAttribute("aria-pressed", String(b === button))
+          for (const side of ["before", "after"]) {
+            document.getElementById(side).src = `${side}/?lang=${lang}`
+            document.getElementById(`open-${side}`).href = `${side}/?lang=${lang}`
+          }
+        })
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+rtl-ready: 76 findings in 1 of 1 files · 57 fix · 15 check · 4 tip
+
+examples/before/index.html:2:1      check  <html>  no lang: set it per locale (screen readers, fonts and hyphenation depend on it)  html-lang
+examples/before/index.html:2:1      check  <html>  no dir: set it per locale, dir="rtl" for ar, he, fa, ur  html-dir
+examples/before/index.html:18:9     fix    float: right → float: inline-end  css-physical
+examples/before/index.html:21:9     fix    text-align: left → text-align: start  css-physical
+examples/before/index.html:28:22    check  translateX(120%)  transforms do not flip in RTL; mirror horizontal movement in a [dir="rtl"] rule (centring with -50% is fine)  css-translate
+examples/before/index.html:39:24    fix    ml-3 → ms-3  tw-physical
+examples/before/index.html:41:21    fix    ml-10 → ms-10  tw-physical
+examples/before/index.html:42:30    fix    mr-6 → me-6  tw-physical
+examples/before/index.html:43:30    fix    mr-6 → me-6  tw-physical
+examples/before/index.html:46:21    fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:48:37    fix    ml-1 → ms-1  tw-physical
+examples/before/index.html:49:30    fix    ml-4 → ms-4  tw-physical
+examples/before/index.html:49:91    fix    pl-4 → ps-4  tw-physical
+examples/before/index.html:49:96    fix    pr-3 → pe-3  tw-physical
+examples/before/index.html:51:25    check  icon-arrow-right  directional icon: mirror it in RTL (className="rtl:-scale-x-100")  icon-mirror
+examples/before/index.html:51:42    fix    ml-2 → ms-2  tw-physical
+examples/before/index.html:60:21    check  icon-chevron-right  directional icon: mirror it in RTL (className="rtl:-scale-x-100")  icon-mirror
+examples/before/index.html:62:21    check  icon-chevron-right  directional icon: mirror it in RTL (className="rtl:-scale-x-100")  icon-mirror
+examples/before/index.html:65:42    tip    tracking-tight  Arabic letters join, so letter-spacing breaks them; reset it for Arabic (rtl:tracking-normal or :lang(ar) { letter-spacing: 0 })  letter-spacing
+examples/before/index.html:71:56    tip    tracking-widest  Arabic letters join, so letter-spacing breaks them; reset it for Arabic (rtl:tracking-normal or :lang(ar) { letter-spacing: 0 })  letter-spacing
+examples/before/index.html:82:58    fix    left-3 → start-3  tw-physical
+examples/before/index.html:83:17    check  <input type="email" class="w-full rounded-lg border border-stone-300 py-2.5 p…  emails, phone numbers and URLs are LTR: add dir="ltr" (and rtl:text-right to line up with the other fields)  input-ltr
+examples/before/index.html:83:93    fix    pl-10 → ps-10  tw-physical
+examples/before/index.html:83:99    fix    pr-3 → pe-3  tw-physical
+examples/before/index.html:89:58    fix    left-3 → start-3  tw-physical
+examples/before/index.html:90:17    check  <input type="tel" class="w-full rounded-lg border border-stone-300 py-2.5 pl-…  emails, phone numbers and URLs are LTR: add dir="ltr" (and rtl:text-right to line up with the other fields)  input-ltr
+examples/before/index.html:90:91    fix    pl-10 → ps-10  tw-physical
+examples/before/index.html:90:97    fix    pr-3 → pe-3  tw-physical
+examples/before/index.html:96:51    fix    mr-2 → me-2  tw-physical
+examples/before/index.html:100:35   fix    rounded-r-lg → rounded-e-lg  tw-physical
+examples/before/index.html:100:48   fix    border-l-4 → border-s-4  tw-physical
+examples/before/index.html:100:93   fix    pl-4 → ps-4  tw-physical
+examples/before/index.html:100:98   fix    pr-3 → pe-3  tw-physical
+examples/before/index.html:106:27   check  icon-arrow-left  directional icon: mirror it in RTL (className="rtl:-scale-x-100")  icon-mirror
+examples/before/index.html:106:43   fix    mr-2 → me-2  tw-physical
+examples/before/index.html:109:28   fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:109:92   fix    pl-5 → ps-5  tw-physical
+examples/before/index.html:109:97   fix    pr-4 → pe-4  tw-physical
+examples/before/index.html:111:27   check  icon-arrow-right  directional icon: mirror it in RTL (className="rtl:-scale-x-100")  icon-mirror
+examples/before/index.html:111:44   fix    ml-2 → ms-2  tw-physical
+examples/before/index.html:117:33   fix    right-4 → end-4  tw-physical
+examples/before/index.html:118:54   tip    tracking-widest  Arabic letters join, so letter-spacing breaks them; reset it for Arabic (rtl:tracking-normal or :lang(ar) { letter-spacing: 0 })  letter-spacing
+examples/before/index.html:120:95   fix    margin-left → margin-inline-start  css-physical
+examples/before/index.html:125:45   fix    rounded-l-lg → rounded-s-lg  tw-physical
+examples/before/index.html:125:58   check  bg-linear-to-r → bg-linear-to-r rtl:bg-linear-to-l  gradient direction does not flip; mirror it when the direction means something  tw-gradient
+examples/before/index.html:126:28   fix    ml-3 → ms-3  tw-physical
+examples/before/index.html:127:28   fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:128:33   fix    pr-3 → pe-3  tw-physical
+examples/before/index.html:128:38   fix    text-right → text-end  tw-physical
+examples/before/index.html:131:45   fix    rounded-l-lg → rounded-s-lg  tw-physical
+examples/before/index.html:131:58   check  bg-linear-to-r → bg-linear-to-r rtl:bg-linear-to-l  gradient direction does not flip; mirror it when the direction means something  tw-gradient
+examples/before/index.html:132:28   fix    ml-3 → ms-3  tw-physical
+examples/before/index.html:133:28   fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:134:33   fix    pr-3 → pe-3  tw-physical
+examples/before/index.html:134:38   fix    text-right → text-end  tw-physical
+examples/before/index.html:137:45   fix    rounded-l-lg → rounded-s-lg  tw-physical
+examples/before/index.html:137:58   check  bg-linear-to-r → bg-linear-to-r rtl:bg-linear-to-l  gradient direction does not flip; mirror it when the direction means something  tw-gradient
+examples/before/index.html:138:28   fix    ml-3 → ms-3  tw-physical
+examples/before/index.html:139:28   fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:140:33   fix    pr-3 → pe-3  tw-physical
+examples/before/index.html:140:38   fix    text-right → text-end  tw-physical
+examples/before/index.html:145:80   fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:146:97   fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:147:81   fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:148:103  fix    ml-auto → ms-auto  tw-physical
+examples/before/index.html:154:25   fix    mr-1.5 → me-1.5  tw-physical
+examples/before/index.html:160:34   check  translate-x-px → translate-x-px rtl:-translate-x-px  transforms do not flip in RTL; mirror horizontal movement  tw-translate
+examples/before/index.html:162:25   fix    ml-3 → ms-3  tw-physical
+examples/before/index.html:166:26   fix    ml-3 → ms-3  tw-physical
+examples/before/index.html:169:114  check  →  arrow characters do not mirror in RTL; use a mirrored icon or choose the glyph from the direction  arrow-glyph
+examples/before/index.html:174:38   fix    right-6 → end-6  tw-physical
+examples/before/index.html:174:75   fix    border-l-4 → border-s-4  tw-physical
+examples/before/index.html:174:119  fix    pl-4 → ps-4  tw-physical
+examples/before/index.html:174:124  fix    pr-5 → pe-5  tw-physical
+examples/before/index.html:175:19   fix    mr-2 → me-2  tw-physical
+examples/before/index.html:185:77   tip    .toLocaleDateString()  pass the active locale so digits, separators and dates follow it  intl-locale
+
+By rule
+  tw-physical       54  physical Tailwind utilities → logical (ms/me, ps/pe, start/end, text-start, border-s, rounded-s)
+  icon-mirror        5  arrows/chevrons that must mirror in RTL (never logos, media controls, checkmarks or clocks)
+  css-physical       3  physical CSS properties → logical (margin-inline-start, inset-inline-end, text-align: start)
+  letter-spacing     3  letter-spacing that breaks joined Arabic letters
+  tw-gradient        3  directional gradients
+  input-ltr          2  email, phone and URL inputs that need dir="ltr"
+  html-lang          1  <html> without lang
+  html-dir           1  <html> without a per-locale dir
+  css-translate      1  horizontal transforms/animations that need a mirrored RTL version
+  tw-translate       1  horizontal translate utilities that need an rtl: counterpart
+  arrow-glyph        1  → ← characters in text that will point the wrong way
+  intl-locale        1  number/date formatting without the active locale
+
+fix = safe drop-in replacement (apply all with --fix) · check = needs a look · tip = advice
+Silence a line with a comment containing "rtl-ready-ignore" (or "rtl-ready-ignore-next-line").

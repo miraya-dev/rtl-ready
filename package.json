@@ -1,0 +1,16 @@
+{
+  "name": "rtl-ready",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Claude Code skill that makes web apps ready for right-to-left languages.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "test": "node --test",
+    "scan": "node skills/rtl-ready/scripts/scan.mjs",
+    "scan:example": "node skills/rtl-ready/scripts/scan.mjs examples/before --exit-zero"
+  }
+}

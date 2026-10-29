@@ -1,0 +1,16 @@
+{
+  "name": "rtl-ready",
+  "owner": {
+    "name": "Miraya",
+    "url": "https://github.com/miraya-dev"
+  },
+  "description": "rtl-ready: make any web app ready for Arabic, Hebrew, Persian and Urdu.",
+  "plugins": [
+    {
+      "name": "rtl-ready",
+      "source": "./",
+      "description": "Scan a web app for physical CSS/Tailwind that breaks right-to-left, apply the safe fixes, and finish the job: dir/lang, icon mirroring, bidi text, Arabic typography, Intl.",
+      "version": "0.1.0"
+    }
+  ]
+}

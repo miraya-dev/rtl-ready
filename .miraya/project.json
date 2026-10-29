@@ -1,0 +1,21 @@
+{
+  "$schema": "https://miraya-web-el-mo-dev1.vercel.app/schema/project.json",
+  "slug": "rtl-ready",
+  "title": {
+    "ar": "rtl-ready: جاهز للعربية",
+    "en": "rtl-ready",
+    "fr": "rtl-ready"
+  },
+  "tagline": {
+    "ar": "مهارة مفتوحة المصدر لـ Claude Code تجعل أي تطبيق ويب جاهزًا للغات التي تُكتب من اليمين إلى اليسار: العربية والعبرية والفارسية والأردية.",
+    "en": "An open-source Claude Code skill that makes any web app ready for right-to-left languages: Arabic, Hebrew, Persian and Urdu.",
+    "fr": "Un skill Claude Code open source qui prépare n'importe quelle application web aux langues de droite à gauche : arabe, hébreu, persan et ourdou."
+  },
+  "category": "tooling",
+  "status": "beta",
+  "featured": false,
+  "cover": ".miraya/cover.png",
+  "live_url": "https://rtl-ready.vercel.app",
+  "stack": ["Claude Code", "Node.js", "Tailwind CSS", "CSS"],
+  "open_source": true
+}
