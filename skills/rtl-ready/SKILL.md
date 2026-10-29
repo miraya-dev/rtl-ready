@@ -38,7 +38,9 @@ works in both directions over `[dir="rtl"]` overrides, and change as little as p
 5. **Cover what no scanner sees** (checklist below).
 6. **Verify.**
    - Re-run the scan. Every remaining finding must be intentional and carry a
-     `rtl-ready-ignore` comment saying why.
+     `rtl-ready-ignore` comment saying why (`rtl-ready-ignore-next-line` on the line before). Wrap a
+     block, such as an HTML email template in a string, in `rtl-ready-ignore-start` …
+     `rtl-ready-ignore-end` comments.
    - Run the project's tests and build.
    - Look at the UI in both directions: switch to the RTL locale, or set
      `document.documentElement.dir = "rtl"`. If you can take screenshots, compare LTR and RTL.
@@ -58,7 +60,8 @@ works in both directions over `[dir="rtl"]` overrides, and change as little as p
 - **Keep what is physical on purpose:**
   - Something placed by a physical `side`/`placement` prop, such as Radix `data-[side=left]`.
   - Maps, video scrubbers, piano keys and code editors.
-  - HTML emails: many email clients ignore logical properties, so use physical properties per direction there.
+  - HTML emails: many email clients ignore logical properties, so use physical properties per direction there
+    and put the template between `rtl-ready-ignore-start` and `rtl-ready-ignore-end` comments.
 - **Mirror directional icons:** arrows, chevrons, back/next, breadcrumbs, pagination, "send" and
   "reply". In Tailwind that is `rtl:-scale-x-100`.
   - **Never mirror** logos, media controls (play, fast-forward), checkmarks, clocks and refresh

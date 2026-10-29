@@ -92,6 +92,32 @@ describe("Tailwind classes", () => {
     assert.equal(scanText(`<a class="-translate-x-full rtl:translate-x-full">`, "a.html").length, 0)
   })
 
+  it("accepts an rtl: counterpart that carries more variants", () => {
+    const tsx = `<ArrowRightIcon className="rtl:-scale-x-100 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
+<aside className="-translate-x-full rtl:[&.open]:translate-x-full bg-linear-to-r rtl:md:bg-linear-to-l origin-top-right rtl:data-[state=open]:origin-top-left" />`
+    assert.deepEqual(scanText(tsx, "a.tsx"), [])
+    assert.deepEqual(
+      scanText(`<a className="group-hover:translate-x-1 rtl:group-hover:-scale-x-100" />`, "a.tsx").map((f) => f.found),
+      ["group-hover:translate-x-1"],
+    )
+  })
+
+  it("leaves the optical centring of a play icon alone", () => {
+    const tsx = `<PlayIcon className="size-5 translate-x-0.5" />
+<Icons.Play className="translate-x-px" /><i className="lucide-play translate-x-[1px]" />
+<PlayIcon
+  onClick={() => toggle()}
+  className={cn("size-4 [&>path]:fill-current", playing && "hidden", "translate-x-0.5")}
+/>
+<span className="material-symbols-outlined translate-x-px">play_arrow</span>`
+    assert.deepEqual(scanText(tsx, "a.tsx"), [])
+    const near = `<PlayIcon className="translate-x-0.5" /><ChevronRight className="rtl:-scale-x-100 group-hover:translate-x-1" /><Player className="translate-x-4" />`
+    assert.deepEqual(
+      scanText(near, "a.tsx").map((f) => f.found),
+      ["group-hover:translate-x-1", "translate-x-4"],
+    )
+  })
+
   it("flags space-x-reverse always and space-x only on Tailwind v3", () => {
     const html = `<div class="flex space-x-4 rtl:space-x-reverse"></div>`
     assert.deepEqual(rules(scanText(html, "a.html")), ["tw-space-x"])
@@ -320,6 +346,25 @@ describe("ignores and positions", () => {
     assert.deepEqual(scanText(`// rtl-ready-ignore-file\n<a className="pl-2" />`, "a.tsx"), [])
   })
 
+  it("honours rtl-ready-ignore-start/end blocks", () => {
+    const ts = [
+      `const a = cn("ml-2")`,
+      `// rtl-ready-ignore-start: HTML email, many clients ignore logical CSS`,
+      "const email = { html: `",
+      `  <td style="border-left: 4px solid #ccc; text-align: left">`,
+      `  <p class="pl-2">`,
+      "` }",
+      `// rtl-ready-ignore-end`,
+      `const b = cn("pr-2")`,
+    ].join("\n")
+    assert.deepEqual(pairs(scanText(ts, "a.ts")), [
+      ["ml-2", "ms-2"],
+      ["pr-2", "pe-2"],
+    ])
+    assert.equal(scanText(ts.replace(/rtl-ready-ignore-(?:start|end)/g, ""), "a.ts").length, 5)
+    assert.deepEqual(scanText(`// rtl-ready-ignore-start\nconst a = cn("ml-2")\nconst b = cn("pr-2")`, "a.ts"), [])
+  })
+
   it("reports 1-based line and column", () => {
     const [f] = scanText(`<div>\n  <p class="x ml-2">`, "a.html")
     assert.equal(f.line, 2)
@@ -385,6 +430,7 @@ describe("CLI", () => {
     try {
       const out = execFileSync(process.execPath, [SCAN, dir, "--fix", "--exit-zero"], { encoding: "utf8", cwd: dir })
       assert.match(out, /applied 2 safe fixes/)
+      assert.match(out, /"rtl-ready-ignore-start" and "rtl-ready-ignore-end"/)
       assert.match(readFileSync(join(dir, "src", "App.tsx"), "utf8"), /className="ms-2 space-x-2"/)
       assert.equal(readFileSync(join(dir, "src", "app.css"), "utf8"), `.a { padding-inline-start: 4px }\n`)
       assert.equal(readFileSync(join(dir, "node_modules", "pkg", "x.css"), "utf8"), `.a { margin-left: 0 }\n`)
@@ -420,6 +466,13 @@ describe("CLI", () => {
     assert.equal(spawnSync(process.execPath, [SCAN, "does-not-exist"], { encoding: "utf8" }).status, 2)
     assert.throws(() => parseArgs(["--tailwind", "5"]))
     assert.deepEqual(parseArgs(["src", "--min=fix", "--ignore", "gen/"]).ignore, ["gen/"])
+  })
+
+  it("--help lists the ignore comments", () => {
+    const out = execFileSync(process.execPath, [SCAN, "--help"], { encoding: "utf8" })
+    for (const comment of ["ignore-next-line", "ignore-start", "ignore-end", "ignore-file"]) {
+      assert.match(out, new RegExp(`rtl-ready-${comment}`))
+    }
   })
 
   it("detectTailwind returns null without a tailwindcss dependency", () => {

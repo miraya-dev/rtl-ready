@@ -96,6 +96,8 @@ RTLCSS-generated `*.rtl.css` files are the same: once the source is logical, dro
 Add a comment containing one of these, and say why:
 - `rtl-ready-ignore` on the same line
 - `rtl-ready-ignore-next-line` on the line before
+- `rtl-ready-ignore-start` … `rtl-ready-ignore-end` around a block, such as an HTML email template
+  inside a string (a block without an end runs to the end of the file)
 - `rtl-ready-ignore-file` anywhere in the file
 
 ```tsx

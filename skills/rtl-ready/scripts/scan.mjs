@@ -45,11 +45,20 @@ const FLIP = {
 // variants (`md:`, `hover:`, `data-[x]:`, `[&_svg]:`), an important flag and a minus sign.
 const START = String.raw`(?<=^|[\s"'\`{(,>|=])`
 const END = String.raw`(?=$|[\s"'\`}),<>|;])`
-const VARIANTS = String.raw`(?<variants>(?:[\w*@-]*(?:\[[^\]\s]*\])?(?:\/[\w-]+)?:)*)`
+const VARIANT_CHAIN = String.raw`(?:[\w*@-]*(?:\[[^\]\s]*\])?(?:\/[\w-]+)?:)*`
+const VARIANTS = `(?<variants>${VARIANT_CHAIN})`
 const VAL = String.raw`(?:\d+(?:\.\d+)?|\d+\/\d+|px|auto|full|\[[^\]\s]+\]|\([^)\s]+\))`
 const DIR_VARIANT = /(?:^|:)(?:rtl|ltr):|dir[=\]]/
 // data-[side=left]:left-0 (Radix/shadcn) follows a physical side on purpose
 const SIDE_VARIANT = /\b(?:left|right)\b/
+// A mirrored counterpart on the same line, with or without more variants after rtl:
+// (rtl:-translate-x-1, rtl:group-hover:-translate-x-1).
+const counterpart = (util, dirs = "rtl|ltr") => new RegExp(String.raw`(?:${dirs}):${VARIANT_CHAIN}!?-?${util}`)
+const MIRRORED_TRANSLATE = counterpart("translate-x-")
+const MIRRORED_GRADIENT = counterpart("bg-", "rtl")
+const MIRRORED_ORIGIN = counterpart("origin-", "rtl")
+// translate-x-0.5 on a play icon is optical centring of the triangle: media controls never mirror.
+const PLAY_ICON = /^<(?:\w+\.)*Play(?:Icon)?(?![\w.])|(?<![\w-])lucide-play(?![\w-])|(?<![\w-])play_arrow(?![\w-])/
 
 const cls = (id, severity, util, extra = {}) => ({
   id,
@@ -86,8 +95,10 @@ function classRules(tailwind) {
       hint: "space-x-reverse is usually an RTL workaround; Tailwind v4 space-x is already logical, so it flips twice. Prefer gap-x-* on a flex/grid parent",
     }),
     cls("tw-translate", "warn", String.raw`translate-x-(?<val>${VAL})`, {
-      skip: (g, line) =>
-        /(?:rtl|ltr):-?translate-x-/.test(line) || (g.val === "1/2" && g.neg && /left-1\/2/.test(line)),
+      skip: (g, line, text, i) =>
+        MIRRORED_TRANSLATE.test(line) ||
+        (g.val === "1/2" && g.neg && /left-1\/2/.test(line)) ||
+        PLAY_ICON.test(elementAt(text, i)),
       fix: (g, found) => {
         const negative = Boolean(g.neg) !== g.val.startsWith("[-")
         const size = g.val.startsWith("[-") ? `[${g.val.slice(2)}` : g.val
@@ -96,12 +107,12 @@ function classRules(tailwind) {
       hint: "transforms do not flip in RTL; mirror horizontal movement",
     }),
     cls("tw-gradient", "warn", String.raw`bg-(?<kind>gradient|linear)-to-(?<dir>tl|tr|bl|br|l|r)`, {
-      skip: (g, line) => /rtl:bg-/.test(line),
+      skip: (g, line) => MIRRORED_GRADIENT.test(line),
       fix: (g, found) => `${found} ${g.variants}rtl:bg-${g.kind}-to-${FLIP[g.dir]}`,
       hint: "gradient direction does not flip; mirror it when the direction means something",
     }),
     cls("tw-origin", "warn", String.raw`origin-(?<dir>top-left|top-right|bottom-left|bottom-right|left|right)`, {
-      skip: (g, line) => /rtl:origin-/.test(line),
+      skip: (g, line) => MIRRORED_ORIGIN.test(line),
       fix: (g, found) => `${found} ${g.variants}rtl:origin-${FLIP[g.dir]}`,
       hint: "transform-origin does not flip; a menu anchored at the end grows from the other corner in RTL",
     }),
@@ -136,7 +147,7 @@ function scanClasses(text, base, out, opts, { bootstrap }) {
       const g = m.groups
       if (!rule.dirVariants && (DIR_VARIANT.test(g.variants) || SIDE_VARIANT.test(g.variants))) continue
       const line = lineAround(text, m.index)
-      if (rule.skip?.(g, line)) continue
+      if (rule.skip?.(g, line, text, m.index)) continue
       push(out, rule, base + m.index, m[0], rule.fix ? rule.fix(g, m[0]) : null)
     }
   }
@@ -414,6 +425,32 @@ function openingTag(text, i) {
   return lt === -1 ? "" : text.slice(lt, i)
 }
 
+/**
+ * The whole tag that contains `i` plus the text right after it (`<span class="…">play_arrow`),
+ * or "" when `i` is not inside a tag. Skips `>` inside quotes and `{…}` (`=>`, `[&>svg]:`).
+ */
+function elementAt(text, i) {
+  let lt = text.lastIndexOf("<", i)
+  while (lt > -1 && !/[A-Za-z]/.test(text.charAt(lt + 1))) lt = lt ? text.lastIndexOf("<", lt - 1) : -1
+  if (lt === -1) return ""
+  let quote = ""
+  let depth = 0
+  for (let j = lt + 1; j < text.length; j++) {
+    const ch = text[j]
+    if (quote) {
+      if (ch === quote) quote = ""
+    } else if (ch === '"' || ch === "'" || ch === "`") quote = ch
+    else if (ch === "{") depth++
+    else if (ch === "}") depth--
+    else if (ch === ">" && depth <= 0) {
+      if (j < i) return ""
+      const next = text.indexOf("<", j)
+      return text.slice(lt, next === -1 ? undefined : next)
+    }
+  }
+  return ""
+}
+
 /** Replaces every match with spaces, keeping newlines so offsets and line numbers stay valid. */
 function blank(text, re) {
   return text.replace(re, (m) => m.replace(/[^\n]/g, " "))
@@ -423,9 +460,14 @@ function blankCssComments(css, ext) {
   return ext === ".css" || ext === ".pcss" || ext === ".postcss" ? out : blank(out, /(?<![:"'])\/\/[^\n]*/g)
 }
 
+/** 1-based lines silenced by comments. A block runs from -start to -end (or the end of the file). */
 function ignoredLines(text) {
   const ignored = new Set()
+  let block = false
   text.split("\n").forEach((line, i) => {
+    if (line.includes("rtl-ready-ignore-start")) block = true
+    if (block) ignored.add(i + 1)
+    if (line.includes("rtl-ready-ignore-end")) block = false
     if (line.includes("rtl-ready-ignore-next-line")) ignored.add(i + 2)
     else if (line.includes("rtl-ready-ignore")) ignored.add(i + 1)
   })
@@ -632,7 +674,8 @@ export function formatHuman(result, { color = false, cwd = process.cwd() } = {})
   lines.push(
     "",
     c("dim", "fix = safe drop-in replacement (apply all with --fix) · check = needs a look · tip = advice"),
-    c("dim", 'Silence a line with a comment containing "rtl-ready-ignore" (or "rtl-ready-ignore-next-line").'),
+    c("dim", 'Silence a line with a comment containing "rtl-ready-ignore" (or "rtl-ready-ignore-next-line"),'),
+    c("dim", 'and a block, such as an HTML email template, between "rtl-ready-ignore-start" and "rtl-ready-ignore-end".'),
   )
   return lines.join("\n")
 }
@@ -666,6 +709,12 @@ Usage: node scan.mjs [paths…] [options]
   --tailwind <3|4>  Tailwind major version (default: read from package.json, else 4)
   --exit-zero       exit 0 even when there are findings
   -h, --help        show this help
+
+Silence findings with a comment that says why:
+  rtl-ready-ignore             this line
+  rtl-ready-ignore-next-line   the next line
+  rtl-ready-ignore-start       every line up to rtl-ready-ignore-end (an HTML email template)
+  rtl-ready-ignore-file        the whole file
 
 Exit codes: 0 clean (or only tips), 1 fix/check findings, 2 usage error.`
 

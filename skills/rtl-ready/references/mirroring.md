@@ -63,7 +63,10 @@ Transforms are physical: `translateX(100%)` moves right in both directions.
 - **JS animation libraries:** pick the sign from the direction, e.g. framer-motion
   `x: dir === "rtl" ? -24 : 24`, and the same in GSAP.
 - **Hover nudges:** `group-hover:translate-x-0.5` on an arrow needs an `rtl:` counterpart with the
-  opposite sign. The one exception is the optical centring of a play icon, which stays.
+  opposite sign. The one exception is the optical centring of a play icon, which stays. The scan
+  skips it when the tag names a play icon (`PlayIcon`, `Play`, `lucide-play`, `play_arrow`). An
+  inline `<svg>` triangle needs a `rtl-ready-ignore` comment.
+  The counterpart may carry the same variants after `rtl:` (`rtl:group-hover:-translate-x-0.5`).
 - **Centring** with `-translate-x-1/2` plus `left-1/2` is symmetric and stays.
 - **transform-origin:** a menu that grows from the top-right corner in LTR should grow from the
   top-left in RTL (`origin-top-right rtl:origin-top-left`).

@@ -192,7 +192,8 @@ Options:
 Exit codes: 1 when fix/check findings remain (useful in CI), 2 on usage errors.
 
 To silence a line, add a comment that contains `rtl-ready-ignore`. `rtl-ready-ignore-next-line` and
-`rtl-ready-ignore-file` work too. Say why in the comment.
+`rtl-ready-ignore-file` work too, and `rtl-ready-ignore-start` … `rtl-ready-ignore-end` silence a
+block, such as an HTML email template. Say why in the comment.
 
 ## Limitations
 
@@ -206,7 +207,7 @@ To silence a line, add a comment that contains `rtl-ready-ignore`. `rtl-ready-ig
 - **Bootstrap 5** compiles its logical names to physical CSS, so RTL pages also need
   `bootstrap.rtl.min.css`.
 - **HTML emails** keep physical properties, because many email clients ignore logical ones.
-  Silence those files.
+  Silence those files, or wrap the template in `rtl-ready-ignore-start` / `rtl-ready-ignore-end`.
 - **Web only.** React Native, Flutter and native apps have their own RTL systems.
 - It does not translate your strings.
 

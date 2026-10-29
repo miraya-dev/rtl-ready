@@ -34,4 +34,5 @@ By rule
   intl-locale        1  number/date formatting without the active locale
 
 fix = safe drop-in replacement (apply all with --fix) · check = needs a look · tip = advice
-Silence a line with a comment containing "rtl-ready-ignore" (or "rtl-ready-ignore-next-line").
+Silence a line with a comment containing "rtl-ready-ignore" (or "rtl-ready-ignore-next-line"),
+and a block, such as an HTML email template, between "rtl-ready-ignore-start" and "rtl-ready-ignore-end".
